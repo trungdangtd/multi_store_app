@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:multi_store_app/controller/auth_controller.dart';
 import 'package:multi_store_app/views/screens/authentication_screens/register_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
-  LoginScreen({super.key});
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isPasswordVisible = false; // State để quản lý hiển thị mật khẩu
+  final AuthController authController = AuthController();
+  late String email;
+  late String password;
+
+  // Hàm để chuyển đổi hiển thị mật khẩu
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white.withOpacity(
-        0.95,
-      ),
+      backgroundColor: Colors.white.withOpacity(0.95),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
@@ -51,6 +66,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   TextFormField(
+                    onChanged: (value) => email = value,
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Email không được để trống';
@@ -78,9 +94,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -90,6 +104,9 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   TextFormField(
+                    onChanged: (value) => password = value,
+                    obscureText:
+                        !_isPasswordVisible, // Điều khiển việc ẩn mật khẩu
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Mật khẩu không được để trống';
@@ -115,17 +132,25 @@ class LoginScreen extends StatelessWidget {
                           height: 20,
                         ),
                       ),
-                      suffixIcon: const Icon(Icons.visibility),
+                      suffixIcon: IconButton(
+                        icon: Icon(_isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: _togglePasswordVisibility,
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   InkWell(
-                    onTap: () {
+                    onTap: () async{
                       if (_formKey.currentState!.validate()) {
-                        print('correct');
+                       await authController.signInUsers(
+                          context: context,
+                          email: email,
+                          password: password,
+                        );
                       } else {
+                        // ignore: avoid_print
                         print('incorrect');
                       }
                     },
@@ -141,89 +166,18 @@ class LoginScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 278,
-                            top: 19,
-                            child: Opacity(
-                              opacity: 0.5,
-                              child: Container(
-                                width: 60,
-                                height: 60,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 12,
-                                    color: const Color(0xFF103DE5),
-                                  ),
-                                  borderRadius: BorderRadius.circular(40),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 260,
-                            left: 29,
-                            child: Opacity(
-                              opacity: 0.5,
-                              child: Container(
-                                width: 10,
-                                height: 10,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                    border: Border.all(width: 3),
-                                    color: const Color(0xFF2141E5),
-                                    borderRadius: BorderRadius.circular(5)),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 311,
-                            top: 36,
-                            child: Opacity(
-                              opacity: 0.3,
-                              child: Container(
-                                width: 5,
-                                height: 5,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(3)),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 281,
-                            top: -10,
-                            child: Opacity(
-                              opacity: 0.3,
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                          ),
-                          Center(
-                            child: Text(
-                              'Đăng nhập',
-                              style: GoogleFonts.getFont('Lato',
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
+                      child: Center(
+                        child: Text(
+                          'Đăng nhập',
+                          style: GoogleFonts.getFont('Lato',
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -234,10 +188,11 @@ class LoginScreen extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return RegisterScreen();
-                          }));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const RegisterScreen()),
+                          );
                         },
                         child: Text(
                           'Đăng ký',
@@ -245,9 +200,9 @@ class LoginScreen extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFF103DE5)),
                         ),
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

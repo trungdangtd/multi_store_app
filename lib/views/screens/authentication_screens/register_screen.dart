@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:multi_store_app/controller/auth_controller.dart';
 import 'package:multi_store_app/views/screens/authentication_screens/login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
-  RegisterScreen({super.key});
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthController _authController = AuthController();
+  late String email;
+  late String fullname;
+  late String password;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white.withOpacity(
-        0.95,
-      ),
+      backgroundColor: Colors.white.withOpacity(0.95),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
@@ -24,18 +32,22 @@ class RegisterScreen extends StatelessWidget {
                 children: [
                   Text(
                     "Đăng ký",
-                    style: GoogleFonts.getFont('Lato',
-                        color: const Color(0xFF0d120E),
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.2,
-                        fontSize: 25),
+                    style: GoogleFonts.getFont(
+                      'Lato',
+                      color: const Color(0xFF0d120E),
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.2,
+                      fontSize: 25,
+                    ),
                   ),
                   Text(
                     "Chào mừng bạn quay trở lại",
-                    style: GoogleFonts.getFont('Lato',
-                        color: const Color(0xFF0d120E),
-                        letterSpacing: 0.2,
-                        fontSize: 16),
+                    style: GoogleFonts.getFont(
+                      'Lato',
+                      color: const Color(0xFF0d120E),
+                      letterSpacing: 0.2,
+                      fontSize: 16,
+                    ),
                   ),
                   Image.asset(
                     'assets/images/Illustration.png',
@@ -46,11 +58,17 @@ class RegisterScreen extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Email',
-                      style: GoogleFonts.getFont('Nunito Sans',
-                          fontWeight: FontWeight.w600, letterSpacing: 0.2),
+                      style: GoogleFonts.getFont(
+                        'Nunito Sans',
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
+                      ),
                     ),
                   ),
                   TextFormField(
+                    onChanged: (value) {
+                      email = value;
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Email không được để trống';
@@ -66,8 +84,11 @@ class RegisterScreen extends StatelessWidget {
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       labelText: 'Nhập email của bạn',
-                      labelStyle: GoogleFonts.getFont('Nunito Sans',
-                          fontSize: 14, letterSpacing: 0.1),
+                      labelStyle: GoogleFonts.getFont(
+                        'Nunito Sans',
+                        fontSize: 14,
+                        letterSpacing: 0.1,
+                      ),
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Image.asset(
@@ -78,18 +99,20 @@ class RegisterScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Tên đăng nhập',
-                      style: GoogleFonts.getFont('Nunito Sans',
-                          fontWeight: FontWeight.w600, letterSpacing: 0.2),
+                      style: GoogleFonts.getFont(
+                        'Nunito Sans',
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
+                      ),
                     ),
                   ),
                   TextFormField(
+                    onChanged: (value) => fullname = value,
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Tên đăng nhập không được để trống';
@@ -105,8 +128,11 @@ class RegisterScreen extends StatelessWidget {
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       labelText: 'Nhập tên của bạn',
-                      labelStyle: GoogleFonts.getFont('Nunito Sans',
-                          fontSize: 14, letterSpacing: 0.1),
+                      labelStyle: GoogleFonts.getFont(
+                        'Nunito Sans',
+                        fontSize: 14,
+                        letterSpacing: 0.1,
+                      ),
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Image.asset(
@@ -117,18 +143,20 @@ class RegisterScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Mật khẩu',
-                      style: GoogleFonts.getFont('Nunito Sans',
-                          fontWeight: FontWeight.w600, letterSpacing: 0.2),
+                      style: GoogleFonts.getFont(
+                        'Nunito Sans',
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
+                      ),
                     ),
                   ),
                   TextFormField(
+                    onChanged: (value) => password = value,
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Mật khẩu không được để trống';
@@ -144,8 +172,11 @@ class RegisterScreen extends StatelessWidget {
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       labelText: 'Nhập mật khẩu của bạn',
-                      labelStyle: GoogleFonts.getFont('Nunito Sans',
-                          fontSize: 14, letterSpacing: 0.1),
+                      labelStyle: GoogleFonts.getFont(
+                        'Nunito Sans',
+                        fontSize: 14,
+                        letterSpacing: 0.1,
+                      ),
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Image.asset(
@@ -157,14 +188,19 @@ class RegisterScreen extends StatelessWidget {
                       suffixIcon: const Icon(Icons.visibility),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
                       if (_formKey.currentState!.validate()) {
-                        print('correct');
+                        // ignore: avoid_print
+                        await _authController.signUpUsers(
+                          context: context,
+                          email: email,
+                          fullname: fullname,
+                          password: password,
+                        );
                       } else {
+                        // ignore: avoid_print
                         print('incorrect');
                       }
                     },
@@ -190,7 +226,6 @@ class RegisterScreen extends StatelessWidget {
                               child: Container(
                                 width: 60,
                                 height: 60,
-                                clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                     width: 12,
@@ -201,92 +236,50 @@ class RegisterScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Positioned(
-                            top: 260,
-                            left: 29,
-                            child: Opacity(
-                              opacity: 0.5,
-                              child: Container(
-                                width: 10,
-                                height: 10,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                    border: Border.all(width: 3),
-                                    color: const Color(0xFF2141E5),
-                                    borderRadius: BorderRadius.circular(5)),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 311,
-                            top: 36,
-                            child: Opacity(
-                              opacity: 0.3,
-                              child: Container(
-                                width: 5,
-                                height: 5,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(3)),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 281,
-                            top: -10,
-                            child: Opacity(
-                              opacity: 0.3,
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                          ),
                           Center(
                             child: Text(
                               'Đăng ký',
-                              style: GoogleFonts.getFont('Lato',
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                              style: GoogleFonts.getFont(
+                                'Lato',
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'Bạn đã có tài khoản?',
                         style: GoogleFonts.roboto(
-                            fontWeight: FontWeight.w500, letterSpacing: 1),
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                        ),
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return LoginScreen();
-                          }));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return const LoginScreen();
+                            },
+                          ));
                         },
                         child: Text(
                           'Đăng nhập',
                           style: GoogleFonts.roboto(
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF103DE5)),
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF103DE5),
+                          ),
                         ),
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
