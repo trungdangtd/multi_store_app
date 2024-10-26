@@ -16,6 +16,25 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthController authController = AuthController();
   late String email;
   late String password;
+  bool isLoading = false;
+
+  loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    await authController
+        .signInUsers(
+      context: context,
+      email: email,
+      password: password,
+    )
+        .whenComplete(() {
+      _formKey.currentState!.reset();
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
 
   // Hàm để chuyển đổi hiển thị mật khẩu
   void _togglePasswordVisibility() {
@@ -142,13 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   InkWell(
-                    onTap: () async{
+                    onTap: () {
                       if (_formKey.currentState!.validate()) {
-                       await authController.signInUsers(
-                          context: context,
-                          email: email,
-                          password: password,
-                        );
+                        loginUser();
                       } else {
                         // ignore: avoid_print
                         print('incorrect');
@@ -167,13 +182,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       child: Center(
-                        child: Text(
-                          'Đăng nhập',
-                          style: GoogleFonts.getFont('Lato',
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        child: isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : Text(
+                                'Đăng nhập',
+                                style: GoogleFonts.getFont('Lato',
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
                       ),
                     ),
                   ),

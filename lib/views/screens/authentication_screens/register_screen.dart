@@ -16,6 +16,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late String email;
   late String fullname;
   late String password;
+  bool isLoading = false;
+  registerUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    await _authController
+        .signUpUsers(
+      context: context,
+      email: email,
+      fullname: fullname,
+      password: password,
+    )
+        .whenComplete(() {
+      _formKey.currentState!.reset();
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -190,15 +209,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 20),
                   InkWell(
-                    onTap: () async {
+                    onTap: () {
                       if (_formKey.currentState!.validate()) {
-                        // ignore: avoid_print
-                        await _authController.signUpUsers(
-                          context: context,
-                          email: email,
-                          fullname: fullname,
-                          password: password,
-                        );
+                        registerUser();
                       } else {
                         // ignore: avoid_print
                         print('incorrect');
@@ -237,15 +250,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           Center(
-                            child: Text(
-                              'Đăng ký',
-                              style: GoogleFonts.getFont(
-                                'Lato',
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: isLoading
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : Text(
+                                    'Đăng ký',
+                                    style: GoogleFonts.getFont(
+                                      'Lato',
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
                         ],
                       ),
