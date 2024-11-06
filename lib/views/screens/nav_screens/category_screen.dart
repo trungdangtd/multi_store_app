@@ -4,6 +4,7 @@ import 'package:multi_store_app/controller/category_controller.dart';
 import 'package:multi_store_app/controller/subcategory_controller.dart';
 import 'package:multi_store_app/models/category.dart';
 import 'package:multi_store_app/models/subcategory.dart';
+import 'package:multi_store_app/views/screens/detail/screens/widgets/subcategory_tile_widget.dart';
 import 'package:multi_store_app/views/screens/nav_screens/widgets/header_widget.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -53,6 +54,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               Size.fromHeight(MediaQuery.of(context).size.height * 20),
           child: const HeaderWidget()),
       body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //left side
           Expanded(
@@ -102,81 +104,62 @@ class _CategoryScreenState extends State<CategoryScreen> {
           Expanded(
             flex: 5,
             child: _selectedCategory != null
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          _selectedCategory!.name,
-                          style: GoogleFonts.quicksand(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.7,
+                ? SingleChildScrollView(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            _selectedCategory!.name,
+                            style: GoogleFonts.quicksand(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.7,
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 150,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                            image: NetworkImage(_selectedCategory!.banner),
-                            fit: BoxFit.cover,
-                          )),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: 150,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                              image: NetworkImage(_selectedCategory!.banner),
+                              fit: BoxFit.cover,
+                            )),
+                          ),
                         ),
-                      ),
-                      _subcategories.isNotEmpty
-                          ? GridView.builder(
-                              shrinkWrap: true,
-                              itemCount: _subcategories.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      crossAxisSpacing: 8,
-                                      mainAxisSpacing: 4),
-                              itemBuilder: (context, index) {
-                                final subcategory = _subcategories[index];
-
-                                return Column(
-                                  children: [
-                                    Container(
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade200,
-                                      ),
-                                      child: Center(
-                                        child: Image.network(
-                                          subcategory.image,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
+                        _subcategories.isNotEmpty
+                            ? GridView.builder(
+                                shrinkWrap: true,
+                                itemCount: _subcategories.length,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        crossAxisSpacing: 8,
+                                        mainAxisSpacing: 4,
+                                        childAspectRatio: 2/3),
+                                itemBuilder: (context, index) {
+                                  final subcategory = _subcategories[index];
+                  
+                                  return SubcategoryTileWidget(image: subcategory.image, title: subcategory.subCategoryName);
+                                })
+                            : Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                  child: Text(
+                                    "Không có dữ liệu",
+                                    style: GoogleFonts.quicksand(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    Center(
-                                      child: Text(
-                                        subcategory.subCategoryName,
-                                        style: GoogleFonts.quicksand(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                );
-                              })
-                          : Center(
-                              child: Text(
-                                "Không có dữ liệu",
-                                style: GoogleFonts.quicksand(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
                             )
-                    ],
-                  )
+                      ],
+                    ),
+                )
                 : Container(),
           )
         ],
