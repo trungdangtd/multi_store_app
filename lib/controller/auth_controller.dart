@@ -1,13 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multi_store_app/global_variables.dart';
 import 'package:multi_store_app/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:multi_store_app/provider/user_provider.dart';
 import 'package:multi_store_app/services/manage_http_respone.dart';
 import 'package:multi_store_app/views/screens/authentication_screens/login_screen.dart';
 import 'package:multi_store_app/views/screens/main_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+final providerContainer = ProviderContainer();
 class AuthController {
   Future<void> signUpUsers({
     required context,
@@ -64,9 +68,28 @@ class AuthController {
       manageHttpRespone(
           response: respone,
           context: context,
-          onSuccess: () {
-            Navigator.pushAndRemoveUntil(context,
-                MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
+          onSuccess: () async {
+            //access sharedpreferent for token and user data storage
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
+            //exrtact the authentification token from the response body
+            String token = jsonDecode(respone.body)['token'];
+
+            //STORE the authentification token in the shared preferences
+            await preferences.setString('auth_token', token);
+
+            //encode the user data revieved form the backend as json
+            final userJson = jsonEncode(jsonDecode(respone.body)['user']);
+
+            //update the application state with the user data using riverpod
+            providerContainer.read(userProvider.notifier).setUser(userJson);
+
+            //store the date in shared preferences for future use
+            await preferences.setString('user', userJson);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const MainScreen()),
+                (route) => false);
             showSnackBar(context, 'Đăng nhập thành công');
           });
     } catch (e) {

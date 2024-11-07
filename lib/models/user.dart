@@ -17,7 +17,8 @@ class User {
       required this.state,
       required this.city,
       required this.locality,
-      required this.password, required this.token});
+      required this.password,
+      required this.token});
   // Tuần tự hóa: Chuyển đổi đối tượng User thành một Map
 // Map: Map là một tập hợp các cặp khóa-giá trị
 // Tại sao: Chuyển đối tượng thành Map là bước trung gian giúp việc tuần tự hóa
