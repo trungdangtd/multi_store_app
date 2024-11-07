@@ -23,17 +23,21 @@ class SubcategoryController {
               .map((subcategory) => Subcategory.fromJson(subcategory))
               .toList();
         }else{
+          // ignore: avoid_print
           print('không tìm thấy danh mục con nào');
           return [];
         }
       }else if(response.statusCode ==404){
+        // ignore: avoid_print
         print('không tìm thấy danh mục con nào');
         return [];
       }else{
+        // ignore: avoid_print
         print('lỗi khi load danh mục con');
         return [];
       }
     } catch (e) {
+      // ignore: avoid_print
       print('lỗi khi load danh mục con: $e');
       return [];
     }
