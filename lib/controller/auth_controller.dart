@@ -12,6 +12,7 @@ import 'package:multi_store_app/views/screens/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final providerContainer = ProviderContainer();
+
 class AuthController {
   Future<void> signUpUsers({
     required context,
@@ -95,6 +96,29 @@ class AuthController {
     } catch (e) {
       // ignore: avoid_print
       print("Error: $e");
+    }
+  }
+
+  //signOut
+
+  Future<void> signOutUser({required context}) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      //clear the token and user form share pree
+      await preferences.remove('auth_token');
+      await preferences.remove('user');
+      //clear the user state
+      providerContainer.read(userProvider.notifier).signOut();
+      //navigate to the login screen
+
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) {
+        return const LoginScreen();
+      }), (route) => false);
+
+      showSnackBar(context, 'đăng xuất thành công');
+    } catch (e) {
+      showSnackBar(context, 'Lỗi khi đăng xuất');
     }
   }
 }
