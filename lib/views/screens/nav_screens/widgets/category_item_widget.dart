@@ -37,7 +37,7 @@ class _CategoriesWidgetState extends State<CategoriesWidget> {
                 );
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(
-                  child: Text("Không có banner nào"),
+                  child: Text("Không có danh mục nào"),
                 );
               } else {
                 final category = snapshot.data!;
@@ -48,14 +48,16 @@ class _CategoriesWidgetState extends State<CategoriesWidget> {
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 8,
-                      mainAxisExtent: 200),
+                      mainAxisExtent: 100),
                   itemBuilder: (context, index) {
                     final categories = category[index];
                     return InkWell(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
-                            return InnerCategoryScreen(category: categories,);
+                            return InnerCategoryScreen(
+                              category: categories,
+                            );
                           },
                         ));
                       },
@@ -63,8 +65,8 @@ class _CategoriesWidgetState extends State<CategoriesWidget> {
                         children: [
                           Image.network(
                             categories.image,
-                            height: 47,
-                            width: 47,
+                            height: 50,
+                            width: 50,
                           ),
                           const SizedBox(height: 10),
                           Text(
