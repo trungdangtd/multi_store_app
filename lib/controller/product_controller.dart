@@ -28,4 +28,27 @@ class ProductController {
       throw Exception('Lỗi khi load sản phẩm phổ biến: $e');
     }
   }
+
+  Future<List<Product>> loadProductByCategory(String category)async{
+    try {
+      http.Response response = await http.get(
+        Uri.parse("$uri/api/products-by-category/$category"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body) as List<dynamic>;
+
+        List<Product> products = data
+            .map((product) => Product.fromMap(product as Map<String, dynamic>))
+            .toList();
+        return products;
+      }else{
+        throw Exception('Lỗi khi load sản phẩm theo danh mục');
+      }
+    } catch (e) {
+      throw Exception('Lỗi khi load sản phẩm theo danh mục: $e');  
+    }
+  }
 }
