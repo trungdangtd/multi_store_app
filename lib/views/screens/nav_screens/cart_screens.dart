@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:multi_store_app/currency_formatter.dart';
 import 'package:multi_store_app/provider/cart_provider.dart';
+import 'package:multi_store_app/views/screens/detail/screens/checkout_screen.dart';
 import 'package:multi_store_app/views/screens/main_screen.dart';
 
 class CartScreens extends ConsumerStatefulWidget {
@@ -325,7 +326,11 @@ class _CartScreensState extends ConsumerState<CartScreens> {
             Align(
               alignment: const Alignment(0.88, -1),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const CheckoutScreen();
+                  }));
+                },
                 child: Container(
                   width: 166,
                   height: 71,
