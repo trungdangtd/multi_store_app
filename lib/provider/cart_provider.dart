@@ -85,8 +85,8 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
   }
 
   //method to calculate the total items we have of the cart
-  double calculateTotalAmount() {
-    double totalAmuont = 0.0;
+  int calculateTotalAmount() {
+    int totalAmuont = 0;
     state.forEach((productId, cartItem) {
       totalAmuont += cartItem.quantity * cartItem.productPrice;
     });

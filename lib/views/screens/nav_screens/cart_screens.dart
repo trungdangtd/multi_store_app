@@ -19,6 +19,7 @@ class _CartScreensState extends ConsumerState<CartScreens> {
   Widget build(BuildContext context) {
     final cartData = ref.watch(cartProvider);
     final cartPProvider = ref.read(cartProvider.notifier);
+    final totalAmount = ref.read(cartProvider.notifier).calculateTotalAmount();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize:
@@ -166,117 +167,204 @@ class _CartScreensState extends ConsumerState<CartScreens> {
                     ),
                   ),
                   ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: cartData.length,
-                      itemBuilder: (context, index) {
-                        final cartItem = cartData.values.toList()[index];
+                    shrinkWrap: true,
+                    itemCount: cartData.length,
+                    itemBuilder: (context, index) {
+                      final cartItem = cartData.values.toList()[index];
 
-                        return Card(
-                          child: SizedBox(
-                            height: 200,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 100,
-                                  width: 100,
-                                  child: Image.network(
-                                    cartItem.image[0],
-                                    fit: BoxFit.cover,
-                                  ),
+                      return Card(
+                        child: SizedBox(
+                          height: 200,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 100,
+                                width: 100,
+                                child: Image.network(
+                                  cartItem.image[0],
+                                  fit: BoxFit.cover,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        cartItem.productName,
-                                        style: GoogleFonts.lato(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      cartItem.productName,
+                                      style: GoogleFonts.lato(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      Text(
-                                        cartItem.category,
-                                        style: GoogleFonts.roboto(
-                                          color: Colors.grey,
-                                          fontSize: 14,
-                                        ),
+                                    ),
+                                    Text(
+                                      cartItem.category,
+                                      style: GoogleFonts.roboto(
+                                        color: Colors.grey,
+                                        fontSize: 14,
                                       ),
-                                      Text(
-                                        CurrencyFormatter.formatToVND(
-                                            cartItem.productPrice),
-                                        style: GoogleFonts.lato(
-                                          fontSize: 14,
-                                          color: Colors.pink,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                    ),
+                                    Text(
+                                      CurrencyFormatter.formatToVND(
+                                          cartItem.productPrice),
+                                      style: GoogleFonts.lato(
+                                        fontSize: 14,
+                                        color: Colors.pink,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            height: 40,
-                                            width: 105,
-                                            decoration: const BoxDecoration(
-                                              color: Color(0xff102de1),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                IconButton(
-                                                  onPressed: () {
-                                                    cartPProvider
-                                                        .deCrementCartItem(
-                                                            cartItem.productId);
-                                                  },
-                                                  icon: const Icon(
-                                                    CupertinoIcons.minus,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  cartItem.quantity.toString(),
-                                                  style: const TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    cartPProvider
-                                                        .inCrementCartItem(
-                                                            cartItem.productId);
-                                                  },
-                                                  icon: const Icon(
-                                                    CupertinoIcons.plus,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          height: 40,
+                                          width: 105,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xff102de1),
                                           ),
-                                        ],
-                                      ),
-                                      IconButton(
-                                          onPressed: () {
-                                            cartPProvider.removeCartItem(
-                                                cartItem.productId);
-                                          },
-                                          icon: const Icon(
-                                            CupertinoIcons.delete,
-                                          ))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
+                                          child: Row(
+                                            children: [
+                                              IconButton(
+                                                onPressed: () {
+                                                  cartPProvider
+                                                      .deCrementCartItem(
+                                                          cartItem.productId);
+                                                },
+                                                icon: const Icon(
+                                                  CupertinoIcons.minus,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              Text(
+                                                cartItem.quantity.toString(),
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              IconButton(
+                                                onPressed: () {
+                                                  cartPProvider
+                                                      .inCrementCartItem(
+                                                          cartItem.productId);
+                                                },
+                                                icon: const Icon(
+                                                  CupertinoIcons.plus,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    IconButton(
+                                        onPressed: () {
+                                          cartPProvider.removeCartItem(
+                                              cartItem.productId);
+                                        },
+                                        icon: const Icon(
+                                          CupertinoIcons.delete,
+                                        ))
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
-                        );
-                      })
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
+      bottomNavigationBar: Container(
+        width: 416,
+        height: 72,
+        clipBehavior: Clip.hardEdge,
+        decoration: const BoxDecoration(),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                width: 416,
+                height: 89,
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: const Color(0xffc4c4c4),
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: const Alignment(-0.63, -0.10),
+              child: Text(
+                'Tổng cộng',
+                style: GoogleFonts.roboto(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xffa1a1a1),
+                ),
+              ),
+            ),
+            Align(
+              alignment: const Alignment(-0.19, -0.10),
+              child: Text(
+                CurrencyFormatter.formatToVND(totalAmount),
+                style: GoogleFonts.roboto(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.pink,
+                ),
+              ),
+            ),
+            Align(
+              alignment: const Alignment(0.88, -1),
+              child: InkWell(
+                onTap: () {},
+                child: Container(
+                  width: 166,
+                  height: 71,
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    color: totalAmount == 0
+                        ? Colors.grey
+                        : const Color(
+                            0xff1532E7,
+                          ),
+                  ),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Thanh Toán',
+                            style: GoogleFonts.roboto(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
