@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multi_store_app/controller/auth_controller.dart';
+import 'package:multi_store_app/views/screens/detail/screens/order_screen.dart';
 
 class AccountScreens extends StatefulWidget {
   const AccountScreens({super.key});
@@ -9,7 +10,7 @@ class AccountScreens extends StatefulWidget {
 }
 
 class _AccountScreensState extends State<AccountScreens> {
-  final AuthController _authController = AuthController();
+  final AuthController authController = AuthController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,15 @@ class _AccountScreensState extends State<AccountScreens> {
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
-            await _authController.signOutUser(context: context);
+            // await _authController.signOutUser(context: context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return OrderScreen();
+                },
+              ),
+            );
           },
           child: const Text('Đăng xuất'),
         ),
