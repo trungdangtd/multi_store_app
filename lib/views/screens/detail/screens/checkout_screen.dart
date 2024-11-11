@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:multi_store_app/controller/order_controller.dart';
 import 'package:multi_store_app/currency_formatter.dart';
 import 'package:multi_store_app/provider/cart_provider.dart';
+import 'package:multi_store_app/provider/user_provider.dart';
+import 'package:multi_store_app/views/screens/detail/screens/shipping_address_screen.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
@@ -14,9 +17,11 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   String selectPaymentMethod = 'stripe';
+  final OrderController _orderController = OrderController();
   @override
   Widget build(BuildContext context) {
     final cartData = ref.read(cartProvider);
+    final cartpprovider = ref.read(cartProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thanh toán'),
@@ -31,7 +36,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const ShippingAddressScreen();
+                      },
+                    ),
+                  );
+                },
                 child: SizedBox(
                   width: 335,
                   height: 74,
@@ -346,26 +360,78 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
-          width: 338,
-          height: 58,
-          decoration: BoxDecoration(
-            color: const Color(
-              0xff3854ee,
-            ),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Center(
-            child: Text(
-              selectPaymentMethod == 'stripe' ? 'Thanh toán' : 'Đặt hàng',
-              style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+        child: ref.read(userProvider)!.state == ""
+            ? TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const ShippingAddressScreen();
+                      },
+                    ),
+                  );
+                },
+                child: Text(
+                  'Vui lòng nhập địa chỉ giao hàng',
+                  style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
+              )
+            : InkWell(
+                onTap: () async {
+                  if (selectPaymentMethod == 'stripe') {
+                    //pay with stripe to place the order
+                  } else {
+                    await Future.forEach(cartpprovider.getCartItems.entries,
+                        (entry) {
+                      var item = entry.value;
+                      _orderController.uploadOrders(
+                          id: '',
+                          fullName: ref.read(userProvider)!.fullname,
+                          email: ref.read(userProvider)!.email,
+                          state: 'Viet Nam',
+                          city: 'Hanoi',
+                          locality: 'test state',
+                          productName: item.productName,
+                          productPrice: item.productPrice,
+                          quantity: item.quantity,
+                          category: item.category,
+                          image: item.image[0],
+                          buyerId: ref.read(userProvider)!.id,
+                          vendorId: item.vendorId,
+                          processing: true,
+                          delivered: false,
+                          // ignore: use_build_context_synchronously
+                          context: context);
+                    });
+                  }
+                },
+                child: Container(
+                  width: 338,
+                  height: 58,
+                  decoration: BoxDecoration(
+                    color: const Color(
+                      0xff3854ee,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      selectPaymentMethod == 'stripe'
+                          ? 'Thanh toán'
+                          : 'Đặt hàng',
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
       ),
     );
   }
