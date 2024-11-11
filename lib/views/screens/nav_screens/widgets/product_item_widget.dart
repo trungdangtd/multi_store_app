@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:multi_store_app/currency_formatter.dart';
 import 'package:multi_store_app/models/product.dart';
 import 'package:multi_store_app/views/screens/detail/screens/product_detail_screen.dart';
 
@@ -80,7 +81,15 @@ class ProductItemWidget extends StatelessWidget {
                 color: const Color(0xff868d94),
                 fontWeight: FontWeight.bold,
               ),
-            )
+            ),
+            Text(
+              CurrencyFormatter.formatToVND(product.productPrice),
+              style: GoogleFonts.montserrat(
+                fontSize: 15,
+                color: const Color.fromARGB(255, 21, 23, 26),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),

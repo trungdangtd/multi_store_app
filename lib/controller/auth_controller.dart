@@ -121,4 +121,43 @@ class AuthController {
       showSnackBar(context, 'Lỗi khi đăng xuất');
     }
   }
+
+  //update user state, city and locality
+  Future<void> updateUserLocation({
+    required context,
+    required String id,
+    required String state,
+    required String city,
+    required String locality,
+  }) async {
+    try {
+      http.Response respone = await http.put(Uri.parse('$uri/api/users/$id'),
+          body:
+              jsonEncode({'state': state, 'city': city, 'locality': locality}),
+          headers: <String, String>{
+            "Content-Type":
+                'application/json; charset=UTF-8', //specify the context type as json
+          } //Set the Header for the request
+          );
+      manageHttpRespone(
+          response: respone,
+          context: context,
+          onSuccess: () async {
+            final updatedUser = jsonDecode(respone.body);
+
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
+            final userJson = jsonEncode(updatedUser);
+
+            //update the application state with the user data using riverpod
+            providerContainer.read(userProvider.notifier).setUser(userJson);
+
+            //store the date in shared preferences for future use
+            await preferences.setString('user', userJson);
+            showSnackBar(context, 'Cập nhật thành công');
+          });
+    } catch (e) {
+      showSnackBar(context, 'Lỗi khi cập nhật');
+    }
+  }
 }
