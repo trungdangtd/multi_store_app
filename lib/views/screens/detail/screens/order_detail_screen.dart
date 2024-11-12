@@ -1,19 +1,33 @@
+import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:multi_store_app/controller/product_preview_controller.dart';
 import 'package:multi_store_app/currency_formatter.dart';
 import 'package:multi_store_app/models/order.dart';
 
-class OrderDetailScreen extends StatelessWidget {
+class OrderDetailScreen extends StatefulWidget {
   final Order order;
 
   const OrderDetailScreen({super.key, required this.order});
+
+  @override
+  State<OrderDetailScreen> createState() => _OrderDetailScreenState();
+}
+
+class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  final TextEditingController reviewController = TextEditingController();
+
+  double rating = 0.0;
+
+  final ProductPreviewController productPreviewController =
+      ProductPreviewController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          order.productName,
+          widget.order.productName,
           style: GoogleFonts.montserrat(
             fontWeight: FontWeight.bold,
           ),
@@ -74,7 +88,7 @@ class OrderDetailScreen extends StatelessWidget {
                                     left: 10,
                                     top: 5,
                                     child: Image.network(
-                                      order.image,
+                                      widget.order.image,
                                       width: 58,
                                       height: 67,
                                       fit: BoxFit.cover,
@@ -104,7 +118,7 @@ class OrderDetailScreen extends StatelessWidget {
                                           SizedBox(
                                             width: double.infinity,
                                             child: Text(
-                                              order.productName,
+                                              widget.order.productName,
                                               style: GoogleFonts.montserrat(
                                                 fontWeight: FontWeight.w700,
                                                 fontSize: 16,
@@ -117,7 +131,7 @@ class OrderDetailScreen extends StatelessWidget {
                                           Align(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
-                                              order.category,
+                                              widget.order.category,
                                               style: GoogleFonts.montserrat(
                                                 color: const Color(
                                                   0xff7f808c,
@@ -133,7 +147,7 @@ class OrderDetailScreen extends StatelessWidget {
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               CurrencyFormatter.formatToVND(
-                                                order.productPrice,
+                                                widget.order.productPrice,
                                               ),
                                               style: GoogleFonts.montserrat(
                                                 color: const Color(
@@ -155,15 +169,15 @@ class OrderDetailScreen extends StatelessWidget {
                             left: 13,
                             top: 113,
                             child: Container(
-                              width: order.delivered == true ? 100 : 80,
+                              width: widget.order.delivered == true ? 100 : 80,
                               height: 25,
                               clipBehavior: Clip.antiAlias,
                               decoration: BoxDecoration(
-                                color: order.delivered == true
+                                color: widget.order.delivered == true
                                     ? const Color(
                                         0xff3c55ef,
                                       )
-                                    : order.processing == true
+                                    : widget.order.processing == true
                                         ? Colors.purple
                                         : Colors.red,
                                 borderRadius: BorderRadius.circular(
@@ -177,9 +191,9 @@ class OrderDetailScreen extends StatelessWidget {
                                     left: 5,
                                     top: 2,
                                     child: Text(
-                                      order.delivered == true
+                                      widget.order.delivered == true
                                           ? "Đã giao hàng"
-                                          : order.processing == true
+                                          : widget.order.processing == true
                                               ? "Đang xử lý"
                                               : "Đã hủy",
                                       style: GoogleFonts.montserrat(
@@ -220,7 +234,7 @@ class OrderDetailScreen extends StatelessWidget {
             ),
             child: Container(
               width: 336,
-              height: order.delivered == true ? 170 : 120,
+              height: widget.order.delivered == true ? 170 : 120,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(
@@ -251,20 +265,20 @@ class OrderDetailScreen extends StatelessWidget {
                           height: 8,
                         ),
                         Text(
-                          "${order.state} | ${order.city} | ${order.locality}",
+                          "${widget.order.state} | ${widget.order.city} | ${widget.order.locality}",
                           style: GoogleFonts.montserrat(
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
-                          "Tới: ${order.fullName}",
+                          "Tới: ${widget.order.fullName}",
                           style: GoogleFonts.montserrat(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          "Mã đơn hàng: ${order.id}",
+                          "Mã đơn hàng: ${widget.order.id}",
                           style: GoogleFonts.montserrat(
                             fontWeight: FontWeight.w500,
                           ),
@@ -272,9 +286,58 @@ class OrderDetailScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  order.delivered == true
+                  widget.order.delivered == true
                       ? TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                      'Để lại đánh giá',
+                                    ),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        TextFormField(
+                                          controller: reviewController,
+                                          decoration: const InputDecoration(
+                                            hintText: 'Nhập đánh giá',
+                                          ),
+                                        ),
+                                        RatingBar(
+                                          filledIcon: Icons.star,
+                                          emptyIcon: Icons.star_border,
+                                          onRatingChanged: (value) {
+                                            rating = value;
+                                          },
+                                          initialRating: 3,
+                                          maxRating: 5,
+                                        )
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          final review = reviewController.text;
+                                          productPreviewController.uploadReview(
+                                            buyerId: widget.order.buyerId,
+                                            email: widget.order.email,
+                                            fullName: widget.order.fullName,
+                                            productId: widget.order.id,
+                                            rating: rating,
+                                            review: review,
+                                            context: context,
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Lưu đánh giá',
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                });
+                          },
                           child: Text(
                             'Đánh giá đơn hàng',
                             style: GoogleFonts.montserrat(
