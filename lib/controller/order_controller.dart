@@ -87,4 +87,24 @@ class OrderController {
       throw Exception('Lỗi khi tải đơn hàng: $e');
     }
   }
+
+  //delete order by id
+  Future<void> deleteOrder({required String id, required context}) async {
+    try {
+      http.Response response = await http.delete(
+        Uri.parse('$uri/api/orders/$id'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      manageHttpRespone(
+          response: response,
+          context: context,
+          onSuccess: () {
+            showSnackBar(context, 'Đã xoá đơn hàng');
+          });
+    } catch (e) {
+      showSnackBar(context, 'Lỗi khi xoá đơn hàng: $e');
+    }
+  }
 }
