@@ -71,13 +71,32 @@ class ProductItemWidget extends StatelessWidget {
                   ),
                   fontWeight: FontWeight.bold),
             ),
-            const SizedBox(
-              height: 4,
-            ),
+            product.averageRating == 0
+                ? const SizedBox()
+                : Row(
+                    children: [
+                      const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 12,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        product.averageRating.toStringAsFixed(
+                          1,
+                        ),
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
             Text(
               product.category,
               style: GoogleFonts.quicksand(
-                fontSize: 14,
+                fontSize: 12,
                 color: const Color(0xff868d94),
                 fontWeight: FontWeight.bold,
               ),
