@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:multi_store_app/currency_formatter.dart';
 import 'package:multi_store_app/models/product.dart';
 import 'package:multi_store_app/provider/cart_provider.dart';
+import 'package:multi_store_app/provider/favorite_provider.dart';
 import 'package:multi_store_app/services/manage_http_respone.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
@@ -20,6 +21,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final cartNotifier = ref.read(cartProvider.notifier);
+    final favoriteProviderData = ref.read(favoriesProvider.notifier);
+    ref.watch(favoriesProvider);
     final cartData = ref.watch(cartProvider);
     final isInCart = cartData.containsKey(widget.product.id);
     return Scaffold(
@@ -34,8 +37,28 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.favorite_border),
+            onPressed: () {
+              favoriteProviderData.addProductToFavories(
+                  productName: widget.product.productName,
+                  productPrice: widget.product.productPrice,
+                  category: widget.product.category,
+                  image: widget.product.images,
+                  vendorId: widget.product.vendorId,
+                  productQuantity: widget.product.quantity,
+                  quantity: 1,
+                  productId: widget.product.id,
+                  description: widget.product.description,
+                  fullName: widget.product.fullName);
+              showSnackBar(context,
+                  'Đã thêm vào yêu thích ${widget.product.productName}');
+            },
+            icon: favoriteProviderData.getFavoriesItems
+                    .containsKey(widget.product.id)
+                ? const Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                  )
+                : const Icon(Icons.favorite_border),
           )
         ],
       ),
