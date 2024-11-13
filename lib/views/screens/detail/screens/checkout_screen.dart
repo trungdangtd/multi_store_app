@@ -126,7 +126,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                                 ),
                                               )
                                             : Text(
-                                                'Viet Nam',
+                                                'Nhập thành phố',
                                                 style: GoogleFonts.lato(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
@@ -422,9 +422,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           id: '',
                           fullName: ref.read(userProvider)!.fullname,
                           email: ref.read(userProvider)!.email,
-                          state: 'Viet Nam',
-                          city: 'Hanoi',
-                          locality: 'test state',
+                          state: ref.read(userProvider)!.state,
+                          city: ref.read(userProvider)!.city,
+                          locality: ref.read(userProvider)!.locality,
                           productName: item.productName,
                           productPrice: item.productPrice,
                           quantity: item.quantity,
