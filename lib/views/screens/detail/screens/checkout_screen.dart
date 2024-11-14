@@ -5,13 +5,14 @@ import 'package:multi_store_app/controller/order_controller.dart';
 import 'package:multi_store_app/currency_formatter.dart';
 import 'package:multi_store_app/provider/cart_provider.dart';
 import 'package:multi_store_app/provider/user_provider.dart';
+import 'package:multi_store_app/services/manage_http_respone.dart';
 import 'package:multi_store_app/views/screens/detail/screens/shipping_address_screen.dart';
+import 'package:multi_store_app/views/screens/main_screen.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
 
   @override
-  
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
@@ -436,6 +437,15 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           delivered: false,
                           // ignore: use_build_context_synchronously
                           context: context);
+                    }).then((value) {
+                      cartpprovider.clearCart();
+                      // ignore: use_build_context_synchronously
+                      showSnackBar(context, 'Đặt hàng thành công');
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return const MainScreen();
+                      }));
                     });
                   }
                 },

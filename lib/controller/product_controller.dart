@@ -21,7 +21,7 @@ class ProductController {
             .map((product) => Product.fromMap(product as Map<String, dynamic>))
             .toList();
         return products;
-      }else{
+      } else {
         throw Exception('Lỗi khi load sản phẩm phổ biến');
       }
     } catch (e) {
@@ -29,7 +29,7 @@ class ProductController {
     }
   }
 
-  Future<List<Product>> loadProductByCategory(String category)async{
+  Future<List<Product>> loadProductByCategory(String category) async {
     try {
       http.Response response = await http.get(
         Uri.parse("$uri/api/products-by-category/$category"),
@@ -44,11 +44,60 @@ class ProductController {
             .map((product) => Product.fromMap(product as Map<String, dynamic>))
             .toList();
         return products;
-      }else{
+      } else {
         throw Exception('Lỗi khi load sản phẩm theo danh mục');
       }
     } catch (e) {
-      throw Exception('Lỗi khi load sản phẩm theo danh mục: $e');  
+      throw Exception('Lỗi khi load sản phẩm theo danh mục: $e');
+    }
+  }
+
+  //display related products by subcategory
+  Future<List<Product>> loadRelatedProductBySubCategory(
+      String productId) async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse("$uri/api/related-products-by-subcategory/$productId"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body) as List<dynamic>;
+
+        List<Product> relatedProducts = data
+            .map((product) => Product.fromMap(product as Map<String, dynamic>))
+            .toList();
+        return relatedProducts;
+      } else {
+        throw Exception('Lỗi khi load sản phẩm liên quan');
+      }
+    } catch (e) {
+      throw Exception('Lỗi khi load sản phẩm liên quan: $e');
+    }
+  }
+
+  //method to get the top 10 highest rated products
+  Future<List<Product>> loadTopRatedProduct() async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse("$uri/api/top-rated-products"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body) as List<dynamic>;
+
+        List<Product> topReatedProducts = data
+            .map((product) => Product.fromMap(product as Map<String, dynamic>))
+            .toList();
+        return topReatedProducts;
+      } else {
+        throw Exception('Lỗi khi load sản phẩm top ');
+      }
+    } catch (e) {
+      throw Exception('Lỗi khi load sản phẩm top : $e');
     }
   }
 }
