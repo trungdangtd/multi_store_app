@@ -50,7 +50,7 @@ class OrderController {
         body: order.toJson(),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token' :token!,
+          'x-auth-token': token!,
         },
       );
 
@@ -74,7 +74,7 @@ class OrderController {
         Uri.parse('$uri/api/orders/$buyerId'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token' :token!,
+          'x-auth-token': token!,
         },
       );
       //check if the response is successful
@@ -104,7 +104,7 @@ class OrderController {
         Uri.parse('$uri/api/orders/$id'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token' :token!,
+          'x-auth-token': token!,
         },
       );
       manageHttpRespone(
@@ -115,6 +115,17 @@ class OrderController {
           });
     } catch (e) {
       showSnackBar(context, 'Lỗi khi xoá đơn hàng: $e');
+    }
+  }
+
+  //method to count delivered orders
+  Future<int> getDeleveredOrderCount({required String buyerId}) async {
+    try {
+      List<Order> orders = await loadOrders(buyerId: buyerId);
+      int deliveredOrders = orders.where((order) => order.delivered).length;
+      return deliveredOrders;
+    } catch (e) {
+      throw Exception('Lỗi khi đếm đơn hàng đã giao: $e');
     }
   }
 }

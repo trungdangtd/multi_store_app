@@ -5,17 +5,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multi_store_app/global_variables.dart';
 import 'package:multi_store_app/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:multi_store_app/provider/delivered_order_count_provider.dart';
 import 'package:multi_store_app/provider/user_provider.dart';
 import 'package:multi_store_app/services/manage_http_respone.dart';
 import 'package:multi_store_app/views/screens/authentication_screens/login_screen.dart';
 import 'package:multi_store_app/views/screens/main_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final providerContainer = ProviderContainer();
+
 
 class AuthController {
   Future<void> signUpUsers({
-    required context,
+    required BuildContext context,
     required String email,
     required String fullname,
     required String password,
@@ -54,9 +55,10 @@ class AuthController {
 
   //sign in fuction
   Future<void> signInUsers({
-    required context,
+    required BuildContext context,
     required String email,
     required String password,
+    required WidgetRef ref,
   }) async {
     try {
       http.Response respone = await http.post(Uri.parse('$uri/api/signin'),
@@ -83,7 +85,7 @@ class AuthController {
             final userJson = jsonEncode(jsonDecode(respone.body)['user']);
 
             //update the application state with the user data using riverpod
-            providerContainer.read(userProvider.notifier).setUser(userJson);
+            ref.read(userProvider.notifier).setUser(userJson);
 
             //store the date in shared preferences for future use
             await preferences.setString('user', userJson);
@@ -101,14 +103,15 @@ class AuthController {
 
   //signOut
 
-  Future<void> signOutUser({required context}) async {
+  Future<void> signOutUser({required BuildContext context,required WidgetRef ref}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       //clear the token and user form share pree
       await preferences.remove('auth_token');
       await preferences.remove('user');
       //clear the user state
-      providerContainer.read(userProvider.notifier).signOut();
+      ref.read(userProvider.notifier).signOut();
+      ref.read(deliveredOrderCountProvider.notifier).resetCount();
       //navigate to the login screen
 
       Navigator.pushAndRemoveUntil(context,
@@ -124,11 +127,12 @@ class AuthController {
 
   //update user state, city and locality
   Future<void> updateUserLocation({
-    required context,
+    required BuildContext context,
     required String id,
     required String state,
     required String city,
     required String locality,
+    required WidgetRef ref,
   }) async {
     try {
       http.Response respone = await http.put(Uri.parse('$uri/api/users/$id'),
@@ -150,7 +154,7 @@ class AuthController {
             final userJson = jsonEncode(updatedUser);
 
             //update the application state with the user data using riverpod
-            providerContainer.read(userProvider.notifier).setUser(userJson);
+            ref.read(userProvider.notifier).setUser(userJson);
 
             //store the date in shared preferences for future use
             await preferences.setString('user', userJson);

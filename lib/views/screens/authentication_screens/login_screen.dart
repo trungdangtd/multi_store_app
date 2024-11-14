@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:multi_store_app/controller/auth_controller.dart';
 import 'package:multi_store_app/views/screens/authentication_screens/register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false; // State để quản lý hiển thị mật khẩu
   final AuthController authController = AuthController();
@@ -27,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       email: email,
       password: password,
+      ref: ref,
     )
         .whenComplete(() {
       _formKey.currentState!.reset();
