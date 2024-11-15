@@ -21,6 +21,8 @@ class ProductController {
             .map((product) => Product.fromMap(product as Map<String, dynamic>))
             .toList();
         return products;
+      } else if (response.statusCode == 404) {
+        return [];
       } else {
         throw Exception('Lỗi khi load sản phẩm phổ biến');
       }
@@ -44,6 +46,8 @@ class ProductController {
             .map((product) => Product.fromMap(product as Map<String, dynamic>))
             .toList();
         return products;
+      } else if (response.statusCode == 404) {
+        return [];
       } else {
         throw Exception('Lỗi khi load sản phẩm theo danh mục');
       }
@@ -69,6 +73,8 @@ class ProductController {
             .map((product) => Product.fromMap(product as Map<String, dynamic>))
             .toList();
         return relatedProducts;
+      } else if (response.statusCode == 404) {
+        return [];
       } else {
         throw Exception('Lỗi khi load sản phẩm liên quan');
       }
@@ -93,6 +99,8 @@ class ProductController {
             .map((product) => Product.fromMap(product as Map<String, dynamic>))
             .toList();
         return topReatedProducts;
+      } else if (response.statusCode == 404) {
+        return [];
       } else {
         throw Exception('Lỗi khi load sản phẩm top ');
       }

@@ -86,8 +86,9 @@ class OrderController {
         List<Order> orders =
             data.map((order) => Order.fromJson(order)).toList();
         return orders;
-      }
-      {
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
         throw Exception('Lỗi khi tải đơn hàng');
       }
     } catch (e) {

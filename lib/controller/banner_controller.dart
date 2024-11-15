@@ -5,7 +5,6 @@ import 'package:multi_store_app/global_variables.dart';
 import 'package:multi_store_app/models/banner.dart';
 
 class BannerController {
-  
   //fetch all banners
   Future<List<BannerModel>> loadBanners() async {
     try {
@@ -24,7 +23,9 @@ class BannerController {
         List<BannerModel> banners =
             data.map((banner) => BannerModel.fromJson(banner)).toList();
         return banners;
-      }else{
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
         throw Exception('Lỗi khi load banner');
       }
     } catch (e) {

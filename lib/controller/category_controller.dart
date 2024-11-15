@@ -5,9 +5,8 @@ import 'package:multi_store_app/global_variables.dart';
 import 'package:multi_store_app/models/category.dart';
 
 class CategoryController {
-  
   //load the uploaded categories
-Future<List<Category>> loadCategoriess() async {
+  Future<List<Category>> loadCategoriess() async {
     try {
       http.Response response = await http.get(
         Uri.parse('$uri/api/categories'),
@@ -24,7 +23,9 @@ Future<List<Category>> loadCategoriess() async {
         List<Category> categories =
             data.map((category) => Category.fromJson(category)).toList();
         return categories;
-      }else{
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
         throw Exception('Lỗi khi load danh mục');
       }
     } catch (e) {
@@ -32,5 +33,4 @@ Future<List<Category>> loadCategoriess() async {
       throw Exception('Lỗi khi load danh mục: $e');
     }
   }
-
 }
