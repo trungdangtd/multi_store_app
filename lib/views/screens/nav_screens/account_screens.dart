@@ -5,7 +5,6 @@ import 'package:multi_store_app/controller/auth_controller.dart';
 import 'package:multi_store_app/provider/cart_provider.dart';
 import 'package:multi_store_app/provider/delivered_order_count_provider.dart';
 import 'package:multi_store_app/provider/favorite_provider.dart';
-import 'package:multi_store_app/provider/order_provider.dart';
 import 'package:multi_store_app/provider/user_provider.dart';
 import 'package:multi_store_app/views/screens/detail/screens/order_screen.dart';
 import 'package:multi_store_app/views/screens/detail/screens/shipping_address_screen.dart';
@@ -14,6 +13,7 @@ class AccountScreen extends ConsumerStatefulWidget {
   const AccountScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AccountScreenState createState() => _AccountScreenState();
 }
 
