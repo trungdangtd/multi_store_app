@@ -114,13 +114,16 @@ class AuthController {
       ref.read(deliveredOrderCountProvider.notifier).resetCount();
       //navigate to the login screen
 
+      // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (context) {
         return const LoginScreen();
       }), (route) => false);
 
+      // ignore: use_build_context_synchronously
       showSnackBar(context, 'đăng xuất thành công');
     } catch (e) {
+      // ignore: use_build_context_synchronously
       showSnackBar(context, 'Lỗi khi đăng xuất');
     }
   }

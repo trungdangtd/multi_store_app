@@ -133,4 +133,30 @@ class ProductController {
       throw Exception('Lỗi khi load sản phẩm theo danh mục con: $e');
     }
   }
+
+  Future<List<Product>> sreachProducts(String query) async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse("$uri/api/search-products?query=$query"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      print('search response: ${response.body}');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body) as List<dynamic>;
+
+        List<Product> sreachProducts = data
+            .map((product) => Product.fromMap(product as Map<String, dynamic>))
+            .toList();
+        return sreachProducts;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception('Lỗi khi tìm kiếm sản phẩm');
+      }
+    } catch (e) {
+      throw Exception('Lỗi khi tìm kiếm sản phẩm: $e');
+    }
+  }
 }
