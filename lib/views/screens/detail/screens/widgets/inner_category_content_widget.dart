@@ -5,6 +5,7 @@ import 'package:multi_store_app/controller/subcategory_controller.dart';
 import 'package:multi_store_app/models/category.dart';
 import 'package:multi_store_app/models/product.dart';
 import 'package:multi_store_app/models/subcategory.dart';
+import 'package:multi_store_app/views/screens/detail/screens/subcategory_product_screen.dart';
 import 'package:multi_store_app/views/screens/detail/screens/widgets/inner_banner_widget.dart';
 import 'package:multi_store_app/views/screens/detail/screens/widgets/inner_header_widget.dart';
 import 'package:multi_store_app/views/screens/detail/screens/widgets/subcategory_tile_widget.dart';
@@ -87,9 +88,19 @@ class _InnerCategoryContentWidgetState
                                       end > subcategories.length
                                           ? subcategories.length
                                           : end)
-                                  .map((subcategory) => SubcategoryTileWidget(
-                                        image: subcategory.image,
-                                        title: subcategory.subCategoryName,
+                                  .map((subcategory) => GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                            return SubcategoryProductScreen(
+                                                subcategory: subcategory);
+                                          }));
+                                        },
+                                        child: SubcategoryTileWidget(
+                                          image: subcategory.image,
+                                          title: subcategory.subCategoryName,
+                                        ),
                                       ))
                                   .toList(),
                             ),

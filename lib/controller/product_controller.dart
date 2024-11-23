@@ -108,4 +108,29 @@ class ProductController {
       throw Exception('Lỗi khi load sản phẩm top : $e');
     }
   }
+
+  Future<List<Product>> loadProductBySubCategory(String subCategory) async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse("$uri/api/products-by-subcategory/$subCategory"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body) as List<dynamic>;
+
+        List<Product> relatedProducts = data
+            .map((product) => Product.fromMap(product as Map<String, dynamic>))
+            .toList();
+        return relatedProducts;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception('Lỗi khi load sản phẩm theo danh mục con');
+      }
+    } catch (e) {
+      throw Exception('Lỗi khi load sản phẩm theo danh mục con: $e');
+    }
+  }
 }
