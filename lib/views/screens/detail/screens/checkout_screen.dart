@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:multi_store_app/controller/order_controller.dart';
 import 'package:multi_store_app/currency_formatter.dart';
@@ -19,6 +20,72 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   String selectPaymentMethod = 'stripe';
   final OrderController _orderController = OrderController();
+  bool isLoading = false;
+  Future<void> handleStripePayment(BuildContext context) async {
+    final cartData = ref.read(cartProvider);
+
+    final user = ref.read(userProvider);
+
+    if (cartData.isEmpty) {
+      showSnackBar(context, 'Giỏ hàng của bạn đang trống');
+      return;
+    }
+
+    if (user == null) {
+      showSnackBar(context, 'Thiếu thông tin khách hàng');
+      return;
+    }
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      final totalAmount = cartData.values
+          .fold(0.0, (sum, item) => sum + (item.quantity * item.productPrice));
+
+      if (totalAmount == 0) {
+        showSnackBar(context, 'Tổng tiền hàng phải trên 0');
+        return;
+      }
+      final paymentIntent = await _orderController.createPaymentIntent(
+          amount: totalAmount.toInt(), currency: 'vnd');
+      await Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+        paymentIntentClientSecret: paymentIntent['client_secret'],
+        merchantDisplayName: 'TrungDang Store',
+      ));
+
+      await Stripe.instance.presentPaymentSheet();
+
+      for (final entry in cartData.entries) {
+        final item = entry.value;
+        await _orderController.uploadOrders(
+            id: '',
+            fullName: ref.read(userProvider)!.fullname,
+            email: ref.read(userProvider)!.email,
+            state: ref.read(userProvider)!.state,
+            city: ref.read(userProvider)!.city,
+            locality: ref.read(userProvider)!.locality,
+            productName: item.productName,
+            productPrice: item.productPrice,
+            quantity: item.quantity,
+            category: item.category,
+            image: item.image[0],
+            buyerId: ref.read(userProvider)!.id,
+            vendorId: item.vendorId,
+            processing: true,
+            delivered: false,
+            // ignore: use_build_context_synchronously
+            context: context);
+      }
+    } catch (e) {
+      showSnackBar(context, 'Thanh toán thất bại: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartData = ref.read(cartProvider);
@@ -415,6 +482,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 onTap: () async {
                   if (selectPaymentMethod == 'stripe') {
                     //pay with stripe to place the order
+                    handleStripePayment(context).then((value) {
+                      cartpprovider.clearCart();
+                      // ignore: use_build_context_synchronously
+                      showSnackBar(context, 'Đặt hàng thành công');
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return const MainScreen();
+                      }));
+                    });
                   } else {
                     await Future.forEach(cartpprovider.getCartItems.entries,
                         (entry) {
@@ -459,16 +536,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Center(
-                    child: Text(
-                      selectPaymentMethod == 'stripe'
-                          ? 'Thanh toán'
-                          : 'Đặt hàng',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
+                    child: isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : Text(
+                            selectPaymentMethod == 'stripe'
+                                ? 'Thanh toán'
+                                : 'Đặt hàng',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
                   ),
                 ),
               ),

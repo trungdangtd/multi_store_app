@@ -129,4 +129,31 @@ class OrderController {
       throw Exception('Lỗi khi đếm đơn hàng đã giao: $e');
     }
   }
+
+  Future<Map<String, dynamic>> createPaymentIntent({
+    required int amount,
+    required String currency,
+  }) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('auth_token');
+      http.Response response =
+          await http.post(Uri.parse('$uri/api/payment-intent'),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+                'x-auth-token': token!,
+              },
+              body: jsonEncode({
+                'amount': amount,
+                'currency': currency,
+              }));
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Lỗi khi tạo payment intent ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Lỗi khi tạo payment intent: $e');
+    }
+  }
 }
