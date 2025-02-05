@@ -18,11 +18,6 @@ Mua sắm mọi lúc mọi nơi, đa dạng mặt hàng, giao hàng nhanh chóng
 *   **Ưu đãi và khuyến mãi**: Cập nhật các chương trình khuyến mãi, giảm giá hấp dẫn.
 *   **Hỗ trợ khách hàng**: Tư vấn, giải đáp thắc mắc nhanh chóng, chuyên nghiệp.
 
-## Hướng dẫn cài đặt
-
-*   **Website**: Truy cập [đường link website].
-*   **Ứng dụng di động**: Tải ứng dụng trên [App Store] hoặc [Google Play].
-
 ## Công nghệ
 
 *   Flutter
