@@ -2,7 +2,7 @@
 
 Mua sắm mọi lúc mọi nơi, đa dạng mặt hàng, giao hàng nhanh chóng!
 
-[Hình ảnh ứng dụng trên mobile]
+
 ![image](https://github.com/user-attachments/assets/a49bb603-7113-4cdb-990a-2fece3f53bb3)
 ![image](https://github.com/user-attachments/assets/2e48e515-09d6-4b3c-b9ed-b9f4cc535fb7)
 ![image](https://github.com/user-attachments/assets/723a1f0d-7a4c-4380-ae95-77f53a73ab16)
